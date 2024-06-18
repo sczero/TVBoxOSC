@@ -8,11 +8,10 @@ public final class QuickJSLoader {
     public static void init(Boolean bool) {
         try {
             System.loadLibrary("quickjs-android-wrapper");
-            if (bool.booleanValue()) {
+            if (bool) {
                 startRedirectingStdoutStderr("QuJs ==> ");
             }
-        } catch (Throwable throwable) {
-
+        } catch (Throwable ignored) {
         }
     }
 

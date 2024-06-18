@@ -49,18 +49,21 @@ public class App extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        //保存当前的APP
         instance = this;
+        //初始化字幕颜色
         SubtitleHelper.initSubtitleColor(this);
+        //初始化一些应用的配置参数
         initParams();
-        // takagen99 : Initialize Locale
+        //本地化
         initLocale();
-        // OKGo
+        //HTTP客户端:OKGo
         OkGoHelper.init();
-        // 闭关检查模式
+        //权限:闭关检查模式
         XXPermissions.setCheckMode(false);
-        // Get EPG Info
+        //电视节目:Get EPG Info
         EpgUtil.init();
-        // 初始化Web服务器
+        //初始化Web服务器: 'NanoHttpd/nanohttpd','greenrobot/EventBus'
         ControlManager.init(this);
         //初始化数据库
         AppDataManager.init();
