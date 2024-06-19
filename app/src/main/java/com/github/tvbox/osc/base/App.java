@@ -4,7 +4,6 @@ import android.os.Environment;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.JsLoader;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.callback.EmptyCallback;
@@ -14,8 +13,8 @@ import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.EpgUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.LocaleHelper;
 import com.github.tvbox.osc.util.LOG;
+import com.github.tvbox.osc.util.LocaleHelper;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
@@ -65,16 +64,19 @@ public class App extends MultiDexApplication {
         EpgUtil.init();
         //初始化Web服务器: 'NanoHttpd/nanohttpd','greenrobot/EventBus'
         ControlManager.init(this);
-        //初始化数据库
+        //初始化数据库: Android Room库
         AppDataManager.init();
+        //优雅地处理加载中，重试，无数据等
         LoadSir.beginBuilder()
                 .addCallback(new EmptyCallback())
                 .addCallback(new LoadingCallback())
                 .commit();
+        //配置屏幕适配方案
         AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
                 .setSupportDP(false)
                 .setSupportSP(false)
                 .setSupportSubunits(Subunits.MM);
+        //BiliBili的ijk播放器,初始化
         PlayerHelper.init();
 
         // Delete Cache
@@ -83,12 +85,15 @@ public class App extends MultiDexApplication {
         dir = getExternalCacheDir();
         FileUtils.recursiveDelete(dir);*/
 
+        //清除播放器的缓存
         FileUtils.cleanPlayerCache();
 
         // Add JS support
+        // JS支持
         QuickJSLoader.init();
 
         // add font support, my tv embed font not include emoji
+        // 字体支持
         String extStorageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
         File fontFile = new File(extStorageDir + "/tvbox.ttf");
         if (fontFile.exists()) {
